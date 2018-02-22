@@ -1,46 +1,28 @@
 ### hdp-8-Nifi-installation
 
-> Install prerequisites
+> Install Nifi
 
 ```sh
 # log as root
 sudo su - root
 
-# install packages
- yum -y install libffi-devel gmp-devel ant gcc gcc-c++ rsync krb5-devel openssl-devel \
- cyrus-sasl-devel cyrus-sasl-gssapi sqlite-devel openldap-devel libtidy libxml2-devel \
- libxslt-devel maven
- 
- yum install cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-md5 cyrus-sasl-plain
- 
- yum -y install mysql-devel mysql
- 
- yum -y install python-devel python-simplejson python-setuptools
-```
-
-> Download and install HUE
-
-```sh
 # download 
-wget http://gethue.com/downloads/releases/4.0.1/hue-4.0.1.tgz
+wget http://public-repo-1.hortonworks.com/HDF/3.1.0.0/nifi-1.5.0.3.1.0.0-564-bin.tar.gz
 
 # unpack package
-tar -xzvf hue-4.0.1.tgz
+tar -xzvf nifi-1.5.0.3.1.0.0-564-bin.tar.gz
 
 # create hue directory
-mkdir -p /usr/local/hue
+mkdir -p /usr/local/nifi
 
 # Copy untar binaries into the new folder
-mv hue-4.0.0/* /usr/local/hue
+mv nifi-1.5.0.3.1.0.0-564/* /usr/local/nifi
 
 # go to hue directory
-cd /usr/local/hue
-
-# Build the hue module
-make apps
-
-
+cd /usr/local/nifi
 ```
+
+
 
 > Configure Hadoop cluster to accept connections from HUE:
 - ensure WebHDFS is enabled
@@ -51,16 +33,26 @@ make apps
 ![MetaStore remote database](https://github.com/gamboabdoulraoufou/hdp-5-HUE-installation/blob/master/img/hue_acl.png)
 
 
-
-> Configure HUE to start after reboot
+> Start Nifi
+```sh
+/usr/local/nifi/bin/nifi.sh run
+ ```
+ 
+ > Stop Nifi
+```sh
+/usr/local/nifi/bin/nifi.sh stop
+ ```
+ 
+ 
+> Configure Nifi to start after reboot
 ```sh
 # edit crontab as root
 crontab -e 
 
 # add the following line
 #### START ####
-#start HUE
-@reboot sleep 120; /usr/local/hue/build/env/bin/supervisor -d
+#start Nifi
+@reboot sleep 120; /usr/local/nifi/bin/nifi.sh run
 #### END ####
 
 ```
